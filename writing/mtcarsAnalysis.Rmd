@@ -1,0 +1,93 @@
+---
+title: "Motor Trend Data Analysis"
+author: "Calvin Seto"
+date: "October 21, 2015"
+output: pdf_document
+---
+
+## Executive Summary
+
+Today, modern automatic transmissions do as well or better than manual transmissions, with regard to mileage.
+They can have 6-9 gears and maybe 10-11 in the future
+They can use continuously variable automatic transmissions which theoretically give you an infinite number of gears, so your car can efficiently switch gears as you drive.
+They use a lock-up torque converter that prevents the transmission from slipping at low speeds and locks the gears at high speeds, like a manual transmission.
+
+Before the lock-up torque converter, manual transmissions generally offered better fuel economy.  The data was extracted from 1973-74 models.  We'll perform an analysis to find the answers to these questions:
+
+“Is an automatic or manual transmission better for MPG”
+
+"Quantify the MPG difference between automatic and manual transmissions"
+
+## Methods
+
+The data set contains continuous and categorical variables as well as a few that can be interpreted as either continuous or categorical.  We will choose variables highly correlated to mpg to use as predictors and not use highly correlated predictors to reduce the effects of multicollinearity.
+
+The data set contains the dependent variable, miles per gallon (mpg) and the continuous independent variables weight (wt), displacement (disp), gross horsepower (hp), rear axle ratio (drat), and quarter mile time (qsec).  There are categorical variables transmission (am 0=automatic, 1=manual) and V-shape or straight engine (vs 0=v 1=straight).  Three variables number of cylinders (cyl), number of forward gears (gear), and number of carburetors (carb)
+
+A model just using transmission to predict mpg has a low p-value of 0.000285, but it's R-squared is also low, equal to 0.3598.  Taking the top three most correlated variables with mpg, i.e. wt, cyl, and disp, I created three more models by combining each with transmission.  These models appear to be significant, but the p-values for the transmission coefficient were all high (0.988, 0.0564, and 0.212).  So, transmission by itself appears to predict mpg well, but when combined with highly correlated variables like wt, cyl, and disp, transmission is not significant in predicting mpg.
+
+To control this confounder, we'll design our model by restricting and matching the other variables.
+
+In general, larger values for cyl, disp, and hp mean the car is more powerful, but that doesn't mean it's more fuel efficient.
+A rear axle ratio of 3.42 is associated with everday use cars and better gas mileage and higher speeds.  A rear axle ratio of 4.10 is for cars that tow heavy loads with more torque at lower speeds.
+A heavier car is harder to move and lower quarter mile times mean fast cars.  Both V and straight shape engines are high performing and more gears and carburetors can mean higher performance.
+
+drat, gear, carb, vs
+
+exploratory data analysis, residual plots and diagnostics
+
+
+
+## Results
+model, coefficients, uncertainty
+
+The final regression model was
+$$
+Y_i =  \beta_1 X_{1} + \beta_2 X_{2} + \epsilon 
+$$
+summary(lm(mpg~hp+wt+factor(am),data=mtcars))
+
+
+There was a statistically significant (P = ) relationship between x1 and miles per gallon.  A change of one unit in x1 corresponded to a change of b1 = xxx.  The 95% confidence interval of b1 is.
+
+For example, for this, we would expect a miles per gallon of this for that.
+
+## Conclusions
+
+Our analysis confirms the confounding transmission variable and suggests a linear model relating X1, X2, X3 to miles per gallon.
+
+This is based on a limited and outdated sample of cars that don't represent many of the newer vehicles today which use the technology that makes automatic transmission cars equally or more fuel efficient than manual transmissions.
+
+## Appendix
+
+histogram or scatter plot
+
+no adjustment residuals vs observed values
+
+adjusted residuals vs observed values
+
+## References
+
+[Manual vs Automatic](http://www.cartalk.com/blogs/tom-ray/manual-vs-automatic-which-gets-better-mileage)
+
+[What does the number of cylinders in a car mean?](https://answers.yahoo.com/question/index?qid=20080805141940AAVSqJF)
+
+[Mileage depends on gearing and transmissions, and not so much cylinder number](https://answers.yahoo.com/question/index?qid=20110216160150AAansgk)
+
+[What does engine displacement mean](http://ask.cars.com/2008/07/what-does-engin.html)
+
+[Horsepower and torque What do they mean?](http://blog.nwautos.com/2014/06/horsepower_and_torque_what_do_they_mean.html)
+
+[The axle ratio is the number of times drive shaft turns to the wheel turning once](https://answers.yahoo.com/question/index?qid=20061121133324AAx7sjT)
+
+[Inline vs V engine](http://www.whyhighend.com/inline-vs-v-engine.html)
+
+[Automatic Transmission](https://en.wikipedia.org/wiki/Automatic_transmission)
+
+[Manual Transmission](https://en.wikipedia.org/wiki/Manual_transmission)
+
+[All about the carburetor](http://www.nationalcarburetors.com/carburetor.html)
+
+[Top 10 factors contributing to fuel economy](http://www.driverside.com/auto-library/top_10_factors_contributing_to_fuel_economy-317)
+
+[How to save money on fuel](http://www.driverside.com/auto-library/how_to_save_money_on_fuel-506)

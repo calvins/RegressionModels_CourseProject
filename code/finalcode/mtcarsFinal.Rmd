@@ -1,0 +1,69 @@
+---
+title: "Final mtcars analysis"
+author: "Calvin Seto"
+date: "October 21, 2015"
+output: html_document
+---
+## Some functions to compute predicted R squared
+```{r}
+PRESS <- function(linear.model) {
+  #' calculate the predictive residuals
+  pr <- residuals(linear.model)/(1-lm.influence(linear.model)$hat)
+  #' calculate the PRESS
+  PRESS <- sum(pr^2)
+  
+  return(PRESS)
+}
+pred_r_squared <- function(linear.model) {
+  #' Use anova() to get the sum of squares for the linear model
+  lm.anova <- anova(linear.model)
+  #' Calculate the total sum of squares
+  tss <- sum(lm.anova$'Sum Sq')
+  # Calculate the predictive R^2
+  pred.r.squared <- 1-PRESS(linear.model)/(tss)
+  
+  return(pred.r.squared)
+}
+model_fit_stats <- function(linear.model) {
+  r.sqr <- summary(linear.model)$r.squared
+  adj.r.sqr <- summary(linear.model)$adj.r.squared
+  pre.r.sqr <- pred_r_squared(linear.model)
+  PRESS <- PRESS(linear.model)
+  return.df <- data.frame(r.squared = r.sqr, adj.r.squared = adj.r.sqr, pred.r.squared = pre.r.sqr, press = PRESS)
+  return(return.df)
+}
+lmp <- function (modelobject) {
+    if (class(modelobject) != "lm") stop("Not an object of class 'lm' ")
+    f <- summary(modelobject)$fstatistic
+    p <- pf(f[1],f[2],f[3],lower.tail=F)
+    attributes(p) <- NULL
+    return(p)
+}
+```
+
+## Data and libraries load, integrity check, and summary
+
+```{r}
+library(datasets)
+library(ggplot2)
+library(plyr)
+data(mtcars)
+sum(is.na(mtcars))
+head(mtcars)
+summary(mtcars)
+
+```
+
+## Exploratory analysis
+
+### Scatter plots
+
+
+### Correlations
+
+## Modeling
+
+## Get estimates and confidence intervals
+
+## Figure making
+

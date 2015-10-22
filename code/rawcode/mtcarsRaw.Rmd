@@ -1,0 +1,398 @@
+# Regression Models Course Project
+
+## Some functions to compute predicted R squared
+```{r}
+PRESS <- function(linear.model) {
+  #' calculate the predictive residuals
+  pr <- residuals(linear.model)/(1-lm.influence(linear.model)$hat)
+  #' calculate the PRESS
+  PRESS <- sum(pr^2)
+  
+  return(PRESS)
+}
+pred_r_squared <- function(linear.model) {
+  #' Use anova() to get the sum of squares for the linear model
+  lm.anova <- anova(linear.model)
+  #' Calculate the total sum of squares
+  tss <- sum(lm.anova$'Sum Sq')
+  # Calculate the predictive R^2
+  pred.r.squared <- 1-PRESS(linear.model)/(tss)
+  
+  return(pred.r.squared)
+}
+model_fit_stats <- function(linear.model) {
+  r.sqr <- summary(linear.model)$r.squared
+  adj.r.sqr <- summary(linear.model)$adj.r.squared
+  pre.r.sqr <- pred_r_squared(linear.model)
+  PRESS <- PRESS(linear.model)
+  return.df <- data.frame(r.squared = r.sqr, adj.r.squared = adj.r.sqr, pred.r.squared = pre.r.sqr, press = PRESS)
+  return(return.df)
+}
+lmp <- function (modelobject) {
+    if (class(modelobject) != "lm") stop("Not an object of class 'lm' ")
+    f <- summary(modelobject)$fstatistic
+    p <- pf(f[1],f[2],f[3],lower.tail=F)
+    attributes(p) <- NULL
+    return(p)
+}
+```
+
+## Data and library load, integrity check, and summary
+
+```{r}
+library(datasets)
+library(ggplot2)
+library(plyr)
+data(mtcars)
+sum(is.na(mtcars))
+head(mtcars)
+summary(mtcars)
+
+```
+
+## Explore the data
+
+```{r}
+qplot(mpg, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(wt, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(cyl, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(disp, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(hp, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(carb, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(qsec, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(gear, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(am, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(vs, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(drat, geom="histogram",data=mtcars,binwidth=0.5)
+
+```
+
+## wt vs mpg
+```{r}
+qplot(wt,mpg,data=mtcars,geom=c("point","smooth"),method="loess")
+
+```
+
+## disp vs mpg
+```{r}
+qplot(disp,mpg,data=mtcars,geom=c("point","smooth"),method="loess")
+
+```
+
+## hp vs mpg
+```{r}
+qplot(hp,mpg,data=mtcars,geom=c("point","smooth"),method="loess")
+
+```
+
+## qsec vs mpg
+```{r}
+qplot(qsec,mpg,data=mtcars,geom=c("point","smooth"),method="loess")
+
+```
+
+## drat vs mpg
+```{r}
+qplot(drat,mpg,data=mtcars,geom=c("point","smooth"),method="loess")
+
+```
+
+## tables
+```{r}
+table(mtcars$am)
+table(mtcars$cyl)
+table(mtcars$vs)
+table(mtcars$gear)
+table(mtcars$carb)
+
+```
+
+
+## Look at mpg for (0) automatic and (1) manual transmissions
+```{r}
+boxplot(mpg ~ factor(am), data = mtcars, xlab="transmission", ylab="mpg")
+mean(subset(mtcars, am == 0)$mpg)
+mean(subset(mtcars, am == 1)$mpg)
+
+```
+
+## lm01 - Fit a model with mpg as the response with just the factor variable transmission
+```{r}
+lm01 <- lm(mpg ~ factor(am), data = mtcars)
+summary(lm01)
+pred_r_squared(lm01)
+plot(lm01)
+```
+
+## Correlations
+```{r}
+sort(cor(mtcars)[1,]) # wt,cyl,disp,hp,carb,qsec,gear,am,vs,drat,mpg
+cor(mtcars$cyl,mtcars$disp)
+cor(mtcars$wt,mtcars$disp)
+cor(mtcars$cyl,mtcars$hp)
+cor(mtcars$disp,mtcars$hp)
+cor(mtcars$wt,mtcars$cyl)
+cor(mtcars$wt,mtcars$hp)
+
+```
+
+
+
+## lm02 - Fit model with weight and transmission predicting mpg
+```{r}
+lm02 <- lm(mpg ~ wt + factor(am), data = mtcars)
+summary(lm02)
+pred_r_squared(lm02)
+library(car)
+vif(lm02)
+plot(lm02)
+
+q02 <- qplot(wt, mpg, data=mtcars, colour=am)
+q02 <- q02 + geom_abline(intercept=summary(lm02)$coef[1,1], slope=summary(lm02)$coef[2,1], col="red")
+q02
+
+```
+
+## lm03 - Fit model with cylinders and transmission predicting mpg
+```{r}
+lm03 <- lm(mpg ~ cyl + factor(am), data = mtcars)
+summary(lm03)
+pred_r_squared(lm03)
+library(car)
+vif(lm03)
+plot(lm03)
+
+q03 <- qplot(cyl, mpg, data=mtcars, colour=am)
+q03 <- q03 + geom_abline(intercept=summary(lm03)$coef[1,1], slope=summary(lm03)$coef[2,1], col="red")
+q03
+
+```
+
+
+## lm04 - Fit model with disp and transmission predicting mpg
+```{r}
+lm04 <- lm(mpg ~ disp + factor(am), data = mtcars)
+summary(lm04)
+pred_r_squared(lm04)
+library(car)
+vif(lm04)
+plot(lm04)
+
+q04 <- qplot(disp, mpg, data=mtcars, colour=am)
+q04 <- q04 + geom_abline(intercept=summary(lm04)$coef[1,1], slope=summary(lm04)$coef[2,1], col="red")
+q04
+```
+
+## lm05 - Fit model with wt, cyl, disp, hp and transmission predicting mpg
+```{r}
+lm05 <- lm(mpg ~ wt + cyl + disp + hp + factor(am), data = mtcars)
+summary(lm05)
+pred_r_squared(lm05)
+library(car)
+vif(lm05)
+plot(lm05)
+
+```
+
+## lm06 - Fit model with wt, hp and transmission predicting mpg
+```{r}
+lm06 <- lm(mpg ~ wt + hp + factor(am), data = mtcars)
+summary(lm06)
+pred_r_squared(lm06)
+library(car)
+vif(lm06)
+plot(lm06)
+
+```
+
+## lm07 - Fit model with wt, cyl and transmission predicting mpg
+```{r}
+lm07 <- lm(mpg ~ wt + cyl + factor(am), data = mtcars)
+summary(lm07)
+pred_r_squared(lm07)
+library(car)
+vif(lm07)
+plot(lm07)
+
+```
+
+## lm08 - Fit model with wt interacting with transmission predicting mpg
+```{r}
+lm08 <- lm(mpg ~ wt * factor(am), data = mtcars)
+summary(lm08)
+pred_r_squared(lm08)
+library(car)
+vif(lm08)
+plot(lm08)
+```
+
+## lm09 - Fit model with wt interacting with transmission + qsec predicting mpg
+```{r}
+lm09 <- lm(mpg ~ wt * am + qsec, data=mtcars)
+summary(lm09)
+pred_r_squared(lm09)
+library(car)
+vif(lm09)
+plot(lm09)
+
+```
+
+## lm10 - Fit weight, transmission, wt interacting with transmission
+```{r}
+lm10 <- lm(mpg ~ wt + factor(am) + wt * factor(am), data=mtcars)
+summary(lm10)
+pred_r_squared(lm10)
+library(car)
+vif(lm10)
+plot(lm10)
+
+```
+
+## lm11 - Fit weight, transmission, cyl
+```{r}
+lm11 <- lm(mpg ~ wt + factor(am) + factor(cyl), data=mtcars)
+summary(lm11)
+pred_r_squared(lm11)
+library(car)
+vif(lm11)
+plot(lm11)
+
+```
+
+## lm12 - Fit weight and hp
+```{r}
+lm12 <- lm(mpg ~ wt + hp, data=mtcars)
+summary(lm12)
+pred_r_squared(lm12)
+library(car)
+vif(lm12)
+plot(lm12)
+
+```
+
+## lm13 - Fit weight and carb
+```{r}
+lm13 <- lm(mpg ~ wt + carb, data=mtcars)
+summary(lm13)
+pred_r_squared(lm13)
+library(car)
+vif(lm13)
+plot(lm13)
+
+```
+
+## lm14 - Fit weight and disp
+```{r}
+lm14 <- lm(mpg ~ wt + disp, data=mtcars)
+summary(lm14)
+pred_r_squared(lm14)
+library(car)
+vif(lm14)
+plot(lm14)
+
+```
+
+## lm15 - Fit weight and factor(vs)
+```{r}
+lm15 <- lm(mpg ~ wt + factor(vs), data=mtcars)
+summary(lm15)
+pred_r_squared(lm15)
+library(car)
+vif(lm15)
+plot(lm15)
+
+```
+
+## lm16 - Fit hp and factor(vs)
+```{r}
+lm16 <- lm(mpg ~ hp + factor(vs), data=mtcars)
+summary(lm16)
+pred_r_squared(lm16)
+library(car)
+vif(lm16)
+plot(lm16)
+
+```
+
+## lm17 - Fit disp and factor(vs)
+```{r}
+lm17 <- lm(mpg ~ disp + factor(vs), data=mtcars)
+summary(lm17)
+pred_r_squared(lm17)
+library(car)
+vif(lm17)
+plot(lm17)
+
+```
+
+## Results of stepwise selection using MASS stepAIC
+```{r}
+library(MASS)
+fit<- lm(mpg~cyl+disp+hp+drat+wt+qsec+gear+carb,data=mtcars)
+step <- stepAIC(fit, direction="both")
+step$anova
+
+```
+
+## lm18 - Fit hp, wt, and cyl
+```{r}
+lm18 <- lm(mpg ~ hp + wt + cyl, data=mtcars)
+summary(lm18)
+pred_r_squared(lm18)
+library(car)
+vif(lm18)
+plot(lm18)
+
+```
+
+## Some multiple factor models and cyl,gear,carb as continuous variables
+```{r}
+summary(lm(mpg~wt+factor(am)+factor(vs),data=mtcars))
+summary(lm(mpg~wt+factor(am)+factor(cyl),data=mtcars))
+summary(lm(mpg~wt+factor(am)+factor(gear),data=mtcars))
+summary(lm(mpg~wt+factor(am)+factor(carb),data=mtcars))
+
+summary(lm(mpg~wt+cyl+factor(am),data=mtcars))
+summary(lm(mpg~wt+hp+factor(am),data=mtcars))
+summary(lm(mpg~wt+gear+factor(am),data=mtcars))
+summary(lm(mpg~wt+carb+factor(am),data=mtcars))
+
+```
+
+```{r}
+summary(lm(mpg~wt,data=mtcars))$fstatistic
+summary(lm(mpg~cyl,data=mtcars))$fstatistic
+summary(lm(mpg~disp,data=mtcars))$fstatistic
+summary(lm(mpg~hp,data=mtcars))$fstatistic
+summary(lm(mpg~drat,data=mtcars))$fstatistic
+summary(lm(mpg~vs,data=mtcars))$fstatistic
+summary(lm(mpg~am,data=mtcars))$fstatistic
+summary(lm(mpg~carb,data=mtcars))$fstatistic
+summary(lm(mpg~gear,data=mtcars))$fstatistic
+summary(lm(mpg~qsec,data=mtcars))$fstatistic
+
+```
+
+
+the f statistic decreases with the correlation of each single variable
+
+wt, cyl, disp, hp are all correlated
+
+## Nested modeling
+```{r}
+nm01 <- lm(mpg ~ wt, data=mtcars)
+nm03 <- update(nm01, mpg ~ wt+cyl+disp)
+nm05 <- update(nm01, mpg ~ wt+cyl+disp+hp+drat)
+nm07 <- update(nm01, mpg ~ wt+cyl+disp+hp+drat+vs+am)
+nm09 <- update(nm01, mpg ~ wt+cyl+disp+hp+drat+vs+am+carb+gear)
+nm10 <- update(nm01, mpg ~ wt+cyl+disp+hp+drat+vs+am+carb+gear+qsec)
+anova(nm01,nm03,nm05,nm07,nm09,nm10)
+
+nm01 <- lm(mpg ~ wt, data=mtcars)
+nm03 <- update(nm01, mpg ~ wt+disp+hp)
+nm05 <- update(nm01, mpg ~ wt+disp+hp+drat+carb)
+nm06 <- update(nm01, mpg ~ wt+disp+hp+drat+carb+gear)
+anova(nm01,nm03,nm05,nm06)
+
+```
+
