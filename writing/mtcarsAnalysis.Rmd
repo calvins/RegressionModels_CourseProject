@@ -3,69 +3,32 @@ title: "Motor Trend Data Analysis"
 author: "Calvin Seto"
 date: "October 21, 2015"
 output: pdf_document
+geometry: margin=0.75in
 ---
 
 # Executive Summary
-
 Most drivers know that manual transmissions get better gas mileage than automatic transmissions.  Some say that automatic transmissions do as well or better with regard to miles per gallon.  There are many theories about the effects of different car specifications on gas mileage.
 
 * In general, cars with more horsepower or displacement mean the car is more powerful, but that doesn't mean they are more fuel efficient.
 
-* A rear axle ratio of 3.42 is associated with everday use cars and better gas mileage and higher speeds.
+* A rear axle ratio of 3.42 is associated with everday use cars and better gas mileage with higher speeds.
     + A rear axle ratio of 4.10 is for cars that tow heavy loads with more torque at lower speeds.
 
 * A heavier car is harder to move and less efficient.
 
-* Lower quarter mile times mean faster cars.
-
-* Both V and straight shape engines are high performing.
-
-* More gears and carburetors can mean higher performance.
-
 
 We'll perform a data analysis to answer these questions:
 
-“Is an automatic or manual transmission better for MPG”
+* “Is an automatic or manual transmission better for MPG”
 
-"Quantify the MPG difference between automatic and manual transmissions"
+* "Quantify the MPG difference between automatic and manual transmissions"
 
-Regression models can be very useful statistical tools that help in this situation.  We'll use them to predict a car's miles per gallon with the other variables in the data set, for example weight.  The model we choose will be a parsimonious, easily described mean relationship between miles per gallon and the variables we choose, so we can quantify the average difference between variables.
-
-The basis of regression models is to try to fit a line through our data by finding the middle or mean via least squares, that is, the point that minimizes the sum of the squared distances between the observed data and itself.
-
-# Methods
-## Exploratory data analysis
-The data set includes 10 aspects of 32 cars (1973-74 models) like small cars Fiat 128, Honda Civic and Toyota Corolla; sedans like the Volvo 142E and Lincoln Continental; sports cars like the Pontiac Firebird, Dodge Challenger, and Camaro Z28; and exotic cars like the Ferrari Dino and Maserati Bora.  See tables 1, 2, and 3 in the Appendix for the counts of cars with each specification in the data set.
+# Exploratory data analysis
+See the Appendix for tables 1, 2, and 3 for the counts of cars with each specification in the data set.
 
 The data set contains continuous and categorical variables, specifically the dependent variable, miles per gallon (mpg) and the continuous independent variables weight (wt), displacement (disp), gross horsepower (hp), rear axle ratio (drat), and quarter mile time (qsec).  There are categorical variables, transmission (am 0=automatic, 1=manual) and V-shape or straight engine (vs 0=V, 1=straight).  The remaining variables, number of cylinders (cyl), number of forward gears (gear), and number of carburetors (carb), could be interpreted as either continuous or categorical.  There were no missing values in the data set.
 
-## Model Selection
-Regression model analysis compares these statistics to help us choose the best fit model.
-
-1. residuals - the difference between the observed and fitted data - we want these to be normally distributed around 0
-
-2. significance stars - our statistical software, R marks significant coefficients of our model with one to three asterisks, more is better
-
-3. estimated coefficient - the value of the slope in the regression model (spot check to make sure it seems reasonable)
-
-4. standard error of the coefficient estimate - measures variability in the coefficient estimate (want it to be at least an order of magnitude (power of ten) less than the coefficient estimate)
-
-5. t-value of the coefficient estimate - score used to calculate probability coefficient estimate is significant
-
-6. variable p-value - probability variable is not significant (we want this number to be as small as possible)
-
-7. significance legend - explanation of 2.
-
-8. residual std error/degrees of freedom - standard deviation of the residuals (want this number to be proportional to the quantiles of the residuals for a normal distribution, the 1st and 3rd quantiles should be 1.5 +/- the std error); degrees of freedom is the difference between the number of observations and the number of variables in the model
-
-9. R-squared-metric to evaluate the goodness of fit of the model.  Higher is better with 1 being the best. (it's the variability in your prediction explained by the model)
-
-10. F-statistic and p-value-F-test comparing our model to a model that has fewer parameters. (a low p-value means our model performs better)
-
-11. Predicted R-squared-metric to evaluate how well the model predicts the future
-
-12. Variance Inflation Factor-assesses how much the variance of an estimated regression coefficient increases if your predictors are correlated.  If no factors are correlated, the VIFs will all be 1.  A VIF between 5 and 10 indicates high correlation that may be problematic.  And if the VIF goes above 10, you can assume that the regression coefficients are poorly estimated due to multicollinearity.
-
+# Model Selection
 We started with a model using transmission only to predict mpg, and the coefficient had a low p-value (0.000285), but it's R-squared is also low(0.3598).  Let's to try improve it by adding variables.
 
 We used a correlation table to see how strongly each variable is related to miles per gallon.  We added variables with high correlation to mpg to the model and examined the model's statistics.  To reduce the effects of multicollinearity, we also looked at the correlation amongst each variable.  We omitted variables that were related to each other to reduce the variance of the estimated coefficients, if the predictors were correlated.
@@ -74,9 +37,7 @@ Using the top three most correlated variables with mpg, (i.e. wt, cyl, and disp)
 
 To control the confounding effects of transmission, we'll design models by restricting and matching the other variables.  Additionally, we'll try an automatic model selection method and the nested modeling/ANOVA technique.  We did not use these models because the transmission coefficient was not significant, the variance inflation factors were too high, indicating the variables were correlated, or other variable's coefficients were not significant.
 
-I arrived at the final model by "Reducing the model" or the practice of including all candidate predictors, and then systematically removing the term with the highest p-value one-by-one until only significant predictors are left.
-
-The Appendix shows the final model residuals, coefficients, p-values, R-squared values (multiple, adjusted, and predicted), F-test values, and variance inflation factors. 
+We arrived at the final model by "Reducing the model" or the practice of including all candidate predictors, and then systematically removing the term with the highest p-value one-by-one until only significant predictors are left.
 
 The R-squared is 0.8497, The Adjusted R-squared is 0.8336 and the Predicted R-squared is 0.7946.
 
@@ -86,7 +47,7 @@ The variance inflation factor for weight is 2.482952, quarter mile time is 1.364
 
 Figure 1 in the Appendix shows plots of our model's residuals vs fitted values and Normal Q-Q standardized residuals.
 
-## Results
+# Results
 The final parsimonious regression model that easily describes the mean relationship between weight, quarter mile time, transmission and miles per gallon for automatics was
 $$
 mpg =  9.6178  - 3.9165 wt + 1.2259 qsec 
@@ -117,7 +78,7 @@ With 95% confidence, we estimate a 1 second change in quarter mile time results 
 
 With 95% confidence, we estimate a manual transmission results in a 0.0457 to 5.8260 increase in miles per gallon.
 
-## Conclusions
+# Conclusions
 
 Our analysis arrived at a model that adjusts the confounding transmission variable and suggests a linear model relating weight, quarter mile time, and transmission to miles per gallon.
 
@@ -127,7 +88,8 @@ For a car with weight of 2.168 and quarter mile time of 16.8, the average miles 
 
 This is based on a limited and outdated sample of cars that don't represent many of the newer vehicles today which use the technology that makes automatic transmission cars equally or more fuel efficient than manual transmissions.
 
-## Appendix
+# Appendix
+
 ```{r echo=FALSE}
 library(knitr)
 am1 <- c("automatics","manuals","")
