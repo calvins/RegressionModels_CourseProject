@@ -1,4 +1,8 @@
 # Regression Models Course Project
+```{r}
+row.names(mtcars)
+```
+
 
 ## Some functions to compute predicted R squared
 ```{r}
@@ -53,14 +57,17 @@ summary(mtcars)
 ## Explore the data
 
 ```{r}
+par(mfrow=c(2,2))
 qplot(mpg, geom="histogram",data=mtcars,binwidth=0.5)
 qplot(wt, geom="histogram",data=mtcars,binwidth=0.5)
 qplot(cyl, geom="histogram",data=mtcars,binwidth=0.5)
 qplot(disp, geom="histogram",data=mtcars,binwidth=0.5)
+par(mfrow=c(2,2))
 qplot(hp, geom="histogram",data=mtcars,binwidth=0.5)
 qplot(carb, geom="histogram",data=mtcars,binwidth=0.5)
 qplot(qsec, geom="histogram",data=mtcars,binwidth=0.5)
 qplot(gear, geom="histogram",data=mtcars,binwidth=0.5)
+par(mfrow=c(2,2))
 qplot(am, geom="histogram",data=mtcars,binwidth=0.5)
 qplot(vs, geom="histogram",data=mtcars,binwidth=0.5)
 qplot(drat, geom="histogram",data=mtcars,binwidth=0.5)
@@ -121,6 +128,7 @@ mean(subset(mtcars, am == 1)$mpg)
 lm01 <- lm(mpg ~ factor(am), data = mtcars)
 summary(lm01)
 pred_r_squared(lm01)
+par(mfrow=c(2,2))
 plot(lm01)
 ```
 
@@ -145,6 +153,7 @@ summary(lm02)
 pred_r_squared(lm02)
 library(car)
 vif(lm02)
+par(mfrow=c(2,2))
 plot(lm02)
 
 q02 <- qplot(wt, mpg, data=mtcars, colour=am)
@@ -160,6 +169,7 @@ summary(lm03)
 pred_r_squared(lm03)
 library(car)
 vif(lm03)
+par(mfrow=c(2,2))
 plot(lm03)
 
 q03 <- qplot(cyl, mpg, data=mtcars, colour=am)
@@ -176,6 +186,7 @@ summary(lm04)
 pred_r_squared(lm04)
 library(car)
 vif(lm04)
+par(mfrow=c(2,2))
 plot(lm04)
 
 q04 <- qplot(disp, mpg, data=mtcars, colour=am)
@@ -190,6 +201,7 @@ summary(lm05)
 pred_r_squared(lm05)
 library(car)
 vif(lm05)
+par(mfrow=c(2,2))
 plot(lm05)
 
 ```
@@ -201,6 +213,7 @@ summary(lm06)
 pred_r_squared(lm06)
 library(car)
 vif(lm06)
+par(mfrow=c(2,2))
 plot(lm06)
 
 ```
@@ -212,6 +225,7 @@ summary(lm07)
 pred_r_squared(lm07)
 library(car)
 vif(lm07)
+par(mfrow=c(2,2))
 plot(lm07)
 
 ```
@@ -223,6 +237,7 @@ summary(lm08)
 pred_r_squared(lm08)
 library(car)
 vif(lm08)
+par(mfrow=c(2,2))
 plot(lm08)
 ```
 
@@ -233,6 +248,7 @@ summary(lm09)
 pred_r_squared(lm09)
 library(car)
 vif(lm09)
+par(mfrow=c(2,2))
 plot(lm09)
 
 ```
@@ -244,6 +260,7 @@ summary(lm10)
 pred_r_squared(lm10)
 library(car)
 vif(lm10)
+par(mfrow=c(2,2))
 plot(lm10)
 
 ```
@@ -255,6 +272,7 @@ summary(lm11)
 pred_r_squared(lm11)
 library(car)
 vif(lm11)
+par(mfrow=c(2,2))
 plot(lm11)
 
 ```
@@ -266,6 +284,7 @@ summary(lm12)
 pred_r_squared(lm12)
 library(car)
 vif(lm12)
+par(mfrow=c(2,2))
 plot(lm12)
 
 ```
@@ -277,6 +296,7 @@ summary(lm13)
 pred_r_squared(lm13)
 library(car)
 vif(lm13)
+par(mfrow=c(2,2))
 plot(lm13)
 
 ```
@@ -288,6 +308,7 @@ summary(lm14)
 pred_r_squared(lm14)
 library(car)
 vif(lm14)
+par(mfrow=c(2,2))
 plot(lm14)
 
 ```
@@ -299,6 +320,7 @@ summary(lm15)
 pred_r_squared(lm15)
 library(car)
 vif(lm15)
+par(mfrow=c(2,2))
 plot(lm15)
 
 ```
@@ -310,6 +332,7 @@ summary(lm16)
 pred_r_squared(lm16)
 library(car)
 vif(lm16)
+par(mfrow=c(2,2))
 plot(lm16)
 
 ```
@@ -321,6 +344,7 @@ summary(lm17)
 pred_r_squared(lm17)
 library(car)
 vif(lm17)
+par(mfrow=c(2,2))
 plot(lm17)
 
 ```
@@ -341,6 +365,7 @@ summary(lm18)
 pred_r_squared(lm18)
 library(car)
 vif(lm18)
+par(mfrow=c(2,2))
 plot(lm18)
 
 ```
@@ -383,16 +408,95 @@ wt, cyl, disp, hp are all correlated
 nm01 <- lm(mpg ~ wt, data=mtcars)
 nm03 <- update(nm01, mpg ~ wt+cyl+disp)
 nm05 <- update(nm01, mpg ~ wt+cyl+disp+hp+drat)
-nm07 <- update(nm01, mpg ~ wt+cyl+disp+hp+drat+vs+am)
-nm09 <- update(nm01, mpg ~ wt+cyl+disp+hp+drat+vs+am+carb+gear)
-nm10 <- update(nm01, mpg ~ wt+cyl+disp+hp+drat+vs+am+carb+gear+qsec)
+nm07 <- update(nm01, mpg ~ wt+cyl+disp+hp+drat+factor(vs)+factor(am))
+nm09 <- update(nm01, mpg ~ wt+cyl+disp+hp+drat+factor(vs)+factor(am)+carb+gear)
+nm10 <- update(nm01, mpg ~ wt+cyl+disp+hp+drat+factor(vs)+factor(am)+carb+gear+qsec)
 anova(nm01,nm03,nm05,nm07,nm09,nm10)
 
-nm01 <- lm(mpg ~ wt, data=mtcars)
-nm03 <- update(nm01, mpg ~ wt+disp+hp)
-nm05 <- update(nm01, mpg ~ wt+disp+hp+drat+carb)
-nm06 <- update(nm01, mpg ~ wt+disp+hp+drat+carb+gear)
-anova(nm01,nm03,nm05,nm06)
+nnm01 <- lm(mpg ~ wt, data=mtcars)
+nnm03 <- update(nnm01, mpg ~ wt+disp+hp)
+nnm05 <- update(nnm01, mpg ~ wt+disp+hp+drat+qsec)
+anova(nnm01,nnm03,nnm05)
+
+nnnm01 <- lm(mpg ~ wt, data=mtcars)
+nnnm03 <- update(nnm01, mpg ~ wt+cyl+disp)
+nnnm05 <- update(nnm01, mpg ~ wt+cyl+factor(am)+hp+drat)
+anova(nnnm01,nnnm03,nnnm05)
+
+```
+
+## lm19 - Fit wt, disp and hp
+```{r}
+lm19 <- lm(mpg ~ wt + disp + hp, data=mtcars)
+summary(lm19)
+pred_r_squared(lm19)
+library(car)
+vif(lm19)
+par(mfrow=c(2,2))
+plot(lm19)
+
+```
+
+## lm20 - Fit wt, disp and hp and transmission
+```{r}
+lm20 <- lm(mpg ~ wt + disp + hp + factor(am), data=mtcars)
+summary(lm20)
+pred_r_squared(lm20)
+library(car)
+vif(lm20)
+par(mfrow=c(2,2))
+plot(lm20)
+
+```
+
+# diagnostics
+```{r}
+sort(round(dfbetas(lm20),3))
+
+sort(round(hatvalues(lm20),3))
+
+pairs(mtcars)
+
+```
+
+# Start with full model, remove variables with high p-values until all coefs significant
+```{r}
+full <- lm(mpg~cyl+disp+hp+drat+wt+qsec+factor(vs)+factor(am)+gear+carb,data=mtcars)
+summary(full)
+summary(lm(mpg~disp+hp+drat+wt+qsec+factor(vs)+factor(am)+gear+carb,data=mtcars))
+summary(lm(mpg~disp+hp+drat+wt+qsec+factor(am)+gear+carb,data=mtcars))
+summary(lm(mpg~disp+hp+drat+wt+qsec+factor(am)+gear,data=mtcars))
+summary(lm(mpg~disp+hp+drat+wt+qsec+factor(am),data=mtcars))
+summary(lm(mpg~disp+hp+wt+qsec+factor(am),data=mtcars))
+summary(lm(mpg~hp+wt+qsec+factor(am),data=mtcars))
+summary(lm(mpg~wt+qsec+factor(am),data=mtcars))
+plot(lm(mpg~wt+qsec+factor(am),data=mtcars))
+
+```
+
+
+## lm21 - Fit wt, qsec and transmission
+```{r}
+lm21 <- lm(mpg ~ wt + qsec + factor(am), data=mtcars)
+summary(lm21)
+pred_r_squared(lm21)
+library(car)
+vif(lm21)
+par(mfrow=c(2,2))
+plot(lm21)
+
+```
+the intercept is the response when the predictors are 0.  we are not interested in wt and qsec = 0
+
+## lm22 - Fit wt, qsec and transmission; try centering mpg, wt and qsec due to insignificant intercept
+```{r}
+lm22 <- lm(mpg~I(wt-mean(wt))+I(qsec-mean(qsec))+factor(am), data=mtcars)
+summary(lm22)
+pred_r_squared(lm22)
+library(car)
+vif(lm22)
+par(mfrow=c(2,2))
+plot(lm22)
 
 ```
 

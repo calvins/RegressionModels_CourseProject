@@ -55,15 +55,114 @@ summary(mtcars)
 ```
 
 ## Exploratory analysis
+```{r}
+row.names(mtcars)
+```
+
+
+```{r}
+par(mfrow=c(2,2))
+qplot(mpg, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(wt, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(cyl, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(disp, geom="histogram",data=mtcars,binwidth=0.5)
+par(mfrow=c(2,2))
+qplot(hp, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(carb, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(qsec, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(gear, geom="histogram",data=mtcars,binwidth=0.5)
+par(mfrow=c(2,2))
+qplot(am, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(vs, geom="histogram",data=mtcars,binwidth=0.5)
+qplot(drat, geom="histogram",data=mtcars,binwidth=0.5)
+
+```
+
+## wt vs mpg
+```{r}
+qplot(wt,mpg,data=mtcars,geom=c("point","smooth"),method="loess")
+
+```
 
 ### Scatter plots
 
+## disp vs mpg
+```{r}
+qplot(disp,mpg,data=mtcars,geom=c("point","smooth"),method="loess")
+
+```
+
+## hp vs mpg
+```{r}
+qplot(hp,mpg,data=mtcars,geom=c("point","smooth"),method="loess")
+
+```
+
+## qsec vs mpg
+```{r}
+qplot(qsec,mpg,data=mtcars,geom=c("point","smooth"),method="loess")
+
+```
+
+## drat vs mpg
+```{r}
+qplot(drat,mpg,data=mtcars,geom=c("point","smooth"),method="loess")
+
+```
+
+## tables
+```{r}
+table(mtcars$am)
+table(mtcars$cyl)
+table(mtcars$vs)
+table(mtcars$gear)
+table(mtcars$carb)
+
+```
 
 ### Correlations
+sort(cor(mtcars)[1,]) # wt,cyl,disp,hp,carb,qsec,gear,am,vs,drat,mpg
+cor(mtcars$cyl,mtcars$disp)
+cor(mtcars$wt,mtcars$disp)
+cor(mtcars$cyl,mtcars$hp)
+cor(mtcars$disp,mtcars$hp)
+cor(mtcars$wt,mtcars$cyl)
+cor(mtcars$wt,mtcars$hp)
 
 ## Modeling
+## lm21 - Fit wt, qsec and transmission
+```{r}
+library(datasets)
+data(mtcars)
+lm21 <- lm(mpg ~ wt + qsec + factor(am), data=mtcars)
+summary(lm21)
+pred_r_squared(lm21)
+library(car)
+vif(lm21)
+par(mfrow=c(1,2))
+plot(lm21,which=1)
+plot(lm21,which=2)
+# round(dfbetas(lm21),3)
+summary(round(dfbetas(lm21),3))
+# round(hatvalues(lm21),3)
+summary(round(hatvalues(lm21),3))
+
+```
+
 
 ## Get estimates and confidence intervals
+```{r}
+confint(lm21)
+# sumCoef <- summary(lm21)$coefficients
+# sumCoef[1,1] + c(-1, 1) * qt(.975, df = lm21$df) * sumCoef[1, 2]
+# sumCoef[2,1] + c(-1, 1) * qt(.975, df = lm21$df) * sumCoef[2, 2]
+# sumCoef[3,1] + c(-1, 1) * qt(.975, df = lm21$df) * sumCoef[3, 2]
+# sumCoef[4,1] + c(-1, 1) * qt(.975, df = lm21$df) * sumCoef[4, 2]
+
+predict(lm21,newdata=data.frame(wt=2.168,qsec=16.8,am=0))
+predict(lm21,newdata=data.frame(wt=2.168,qsec=16.8,am=1))
+
+```
 
 ## Figure making
 
